@@ -6,7 +6,11 @@ socketio = SocketIO(app)
 
 @socketio.on('json_event')
 def handle_json_event(json_data):
-    print(f'Received JSON: {json_data}')
+    print("Received JSON Data:")
+    for key, value in json_data.items():
+        print(f'{key}: {value}')  # 各キーとその値を表示
+    
+    # 受信したデータを含む応答をクライアントに送信
     emit('response_event', {'data': 'JSON received', 'received_data': json_data})
 
 if __name__ == '__main__':

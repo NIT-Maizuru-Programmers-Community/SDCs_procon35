@@ -11,11 +11,14 @@ sio.connect('http://153.121.41.11:5000')
 def on_message(data):
     print('Received from server:', data)
 
+t = "maizuru"
+
 # 送信するJSONデータを準備
 data = {
     "sensor_id": "sensor_01",
     "temperature": 23.5,
-    "humidity": 60.2
+    "humidity": 60.2,
+    "test": t
 }
 
 # サーバーにデータを送信
