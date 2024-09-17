@@ -25,4 +25,4 @@ def disconnect(sid):
     print('Client disconnected:', sid)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='153.121.41.11', port=5000)
