@@ -21,7 +21,7 @@ async def server(websocket, path):
 
 # WebSocketサーバーを起動
 async def main():
-    async with websockets.serve(server, "0.0.0.0", 5000):
+    async with websockets.serve(server, "153.121.41.11", 5000):
         await asyncio.Future()  # 無限に待機
 
 if __name__ == "__main__":
