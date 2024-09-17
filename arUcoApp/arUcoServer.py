@@ -1,17 +1,28 @@
 from flask import Flask
-from flask_socketio import SocketIO, emit
+import socketio
 
+# FlaskとSocket.IOサーバーを初期化
 app = Flask(__name__)
-socketio = SocketIO(app)
+sio = socketio.Server()
+app.wsgi_app = socketio.WSGIApp(sio, app.wsgi_app)
 
-@socketio.on('json_event')
-def handle_json_event(json_data):
-    print("Received JSON Data:")
-    for key, value in json_data.items():
-        print(f'{key}: {value}')  # 各キーとその値を表示
-    
-    # 受信したデータを含む応答をクライアントに送信
-    emit('response_event', {'data': 'JSON received', 'received_data': json_data})
+# クライアントからの接続が確立したときに呼び出されるイベント
+@sio.event
+def connect(sid, environ):
+    print('Client connected:', sid)
+
+# クライアントが送信したJSONデータを受け取るイベント
+@sio.event
+def json_event(sid, data):
+    print('Received JSON from client:', data)
+
+    # クライアントにレスポンスを送信（オプション）
+    sio.emit('response_event', {'message': 'Data received!'}, room=sid)
+
+# クライアントが切断したときに呼び出されるイベント
+@sio.event
+def disconnect(sid):
+    print('Client disconnected:', sid)
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
