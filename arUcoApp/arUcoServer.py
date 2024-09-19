@@ -17,8 +17,8 @@ async def server(websocket, path):
             print(f"Received JSON data: {data}")
 
             # JSONファイルに書き出し
-            with open('data.json', 'w') as f:
-                json.dumps(data, f)
+            with open('data.json', 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=False)
 
             # クライアントにレスポンスを送信（オプション）
             response = json.dumps({"message": "Data received!"})
