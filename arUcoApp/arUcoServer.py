@@ -1,3 +1,7 @@
+#------
+#ArUcoマーカー受信サーバー
+#------
+
 import asyncio
 import websockets
 import json
@@ -11,6 +15,10 @@ async def server(websocket, path):
         async for message in websocket:
             data = json.loads(message)
             print(f"Received JSON data: {data}")
+
+            # JSONファイルに書き出し
+            with open('data.json', 'wt') as f:
+                json.dump(data, f, indent=2, ensure_ascii=False)
 
             # クライアントにレスポンスを送信（オプション）
             response = json.dumps({"message": "Data received!"})

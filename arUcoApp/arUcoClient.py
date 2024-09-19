@@ -1,5 +1,6 @@
 #------
-#ArUcoマーカー
+#ArUcoマーカー読み込み/送信用
+#------
 
 import asyncio
 import websockets
