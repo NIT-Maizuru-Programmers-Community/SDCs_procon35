@@ -44,12 +44,18 @@ while True:
         # 基準マーカーの座標を取得
         for i, marker_id in enumerate(ids):
             if marker_id[0] in reference_ids:
-                reference_corners[marker_id[0]] = corners[i][0][0]  # 左上の座標を保存
+                # マーカーの4つのコーナーを保存 (左上:LU, 右上:RU, 右下:RD, 左下:LD)
+                reference_corners[marker_id[0]] = {
+                    "LU": corners[i][0][0],  # 左上
+                    "RU": corners[i][0][1],  # 右上
+                    "RD": corners[i][0][2],  # 右下
+                    "LD": corners[i][0][3],  # 左下
+                }
                 
         # 基準マーカーがすべて検出されている場合、射影変換を用いて座標を変換
         if len(reference_corners) == 4:
-            # 実際のマーカー座標
-            actual_positions = np.array([reference_corners[i] for i in reference_ids], dtype=np.float32)
+            # 実際のマーカー座標（左上の座標を使用）
+            actual_positions = np.array([reference_corners[i]["LU"] for i in reference_ids], dtype=np.float32)
             
             # 理想的なマーカー座標
             ideal_positions_array = np.array([ideal_positions[i] for i in reference_ids], dtype=np.float32)
@@ -60,19 +66,20 @@ while True:
             # 他のマーカーの座標を計算して表示
             for i, marker_id in enumerate(ids):
                 if marker_id[0] not in reference_ids:
-                    # マーカーの左上の実座標を取得
-                    corner = np.array([corners[i][0][0]], dtype=np.float32)
-                    
-                    # 座標変換
-                    transformed_corner = cv2.perspectiveTransform(np.array([corner]), transform_matrix)[0][0]
-                    
-                    # ターミナルに座標を表示
-                    print(f"Marker ID: {marker_id[0]}, Transformed Position: x={transformed_corner[0]:.2f}, y={transformed_corner[1]:.2f}")
-                    
-                    # フレームに変換された座標を表示
-                    cv2.putText(frame, f"x={transformed_corner[0]:.2f}, y={transformed_corner[1]:.2f}", 
-                                (int(corner[0][0]), int(corner[0][1] - 10)), 
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
+                    # マーカーの4つのコーナー (LU, RU, RD, LD) を取得して座標変換
+                    for j, label in enumerate(["LU", "RU", "RD", "LD"]):
+                        corner = np.array([corners[i][0][j]], dtype=np.float32)
+                        
+                        # 座標変換
+                        transformed_corner = cv2.perspectiveTransform(np.array([corner]), transform_matrix)[0][0]
+                        
+                        # ターミナルに座標を表示
+                        print(f"Marker ID: {marker_id[0]}, {label} Transformed Position: x={transformed_corner[0]:.2f}, y={transformed_corner[1]:.2f}")
+                        
+                        # フレームに変換された座標とラベルを表示
+                        cv2.putText(frame, f"{label}: x={transformed_corner[0]:.2f}, y={transformed_corner[1]:.2f}", 
+                                    (int(corner[0][0]), int(corner[0][1] - 10)), 
+                                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
     
     # フレームを表示
     cv2.imshow('ArUco Marker Detection', frame)
