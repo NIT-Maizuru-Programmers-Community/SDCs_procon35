@@ -9,7 +9,7 @@ import json
 async def send_data():
     # WebSocketサーバーのURI
     uri = "ws://153.121.41.11:5000"
-    t = "Kyoto"
+    t = "Kakuyu"
 
     async with websockets.connect(uri) as websocket:
         # 送信するデータをJSON形式で準備

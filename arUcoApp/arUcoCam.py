@@ -7,7 +7,7 @@ aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 parameters = aruco.DetectorParameters()
 
 # カメラの初期化
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 # 基準マーカーのIDとその座標
 reference_ids = [0, 1, 2, 3]
