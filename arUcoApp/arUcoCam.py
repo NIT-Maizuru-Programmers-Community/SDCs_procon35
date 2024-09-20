@@ -24,6 +24,10 @@ ideal_positions = {
     3: (max_coordinate, 0)  # 右上
 }
 
+def clip_coordinate(value, min_value=0, max_value=6000):
+    """座標を指定範囲にクリップ（制約）する関数"""
+    return max(min_value, min(value, max_value))
+
 while True:
     # フレームの読み込み
     ret, frame = cap.read()
@@ -73,11 +77,15 @@ while True:
                         # 座標変換
                         transformed_corner = cv2.perspectiveTransform(np.array([corner]), transform_matrix)[0][0]
                         
+                        # 座標をクリップ（範囲制約）
+                        transformed_x = clip_coordinate(transformed_corner[0])
+                        transformed_y = clip_coordinate(transformed_corner[1])
+                        
                         # ターミナルに座標を表示
-                        print(f"Marker ID: {marker_id[0]}, {label} Transformed Position: x={transformed_corner[0]:.2f}, y={transformed_corner[1]:.2f}")
+                        print(f"Marker ID: {marker_id[0]}, {label} Transformed Position: x={transformed_x:.2f}, y={transformed_y:.2f}")
                         
                         # フレームに変換された座標とラベルを表示
-                        cv2.putText(frame, f"{label}: x={transformed_corner[0]:.2f}, y={transformed_corner[1]:.2f}", 
+                        cv2.putText(frame, f"{label}: x={transformed_x:.2f}, y={transformed_y:.2f}", 
                                     (int(corner[0][0]), int(corner[0][1] - 10)), 
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2, cv2.LINE_AA)
     
