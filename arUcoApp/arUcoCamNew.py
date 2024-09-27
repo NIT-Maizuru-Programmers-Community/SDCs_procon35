@@ -3,7 +3,7 @@ from cv2 import aruco
 import numpy as np
 
 # カメラの初期化
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 # ArUcoマーカーの辞書とパラメータの設定
 p_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
