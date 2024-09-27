@@ -1,72 +1,49 @@
 import cv2
+from cv2 import aruco
 import numpy as np
 
-# ArUcoマーカーの辞書を読み込み
-aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
+# カメラの初期化
+cap = cv2.VideoCapture(2)
 
-# ArUcoマーカー検出パラメータを設定
-parameters = cv2.aruco.DetectorParameters()
+# ArUcoマーカーの辞書とパラメータの設定
+p_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 
-# カメラからの映像をキャプチャ
-cap = cv2.VideoCapture(0)
-
-# 目標とする鳥瞰図のサイズ
-bird_eye_width = 6000
-bird_eye_height = 6000
-
-# 四隅のターゲット座標（鳥瞰図上での座標）
-bird_eye_points = np.array([
-    [0, 0],  # 左上 (ID=0)
-    [bird_eye_width, 0],  # 右上 (ID=1)
-    [bird_eye_width, bird_eye_height],  # 右下 (ID=2)
-    [0, bird_eye_height]  # 左下 (ID=3)
-], dtype=np.float32)
-
+# メイン処理
 while True:
+    # フレーム読み込み
     ret, frame = cap.read()
+
     if not ret:
         break
 
-    # グレースケールに変換
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # マーカー検出
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(frame, p_dict)
 
-    # ArUcoマーカーを検出
-    corners, ids, _ = cv2.aruco.detectMarkers(gray, aruco_dict, parameters=parameters)
+    # マーカーが検出されたか確認
+    if ids is not None and len(ids) == 4:
+        # 時計回りで左上から順にマーカーの中心座標をmに格納
+        m = np.empty((4, 2))  # 4つのマーカーに対してそれぞれ2つのパラメータを与える(x,y)
+        for i, c in zip(ids.ravel(), corners):
+            m[i] = c[0].mean(axis=0)
 
-    if ids is not None and len(ids) >= 4:
-        # 検出した四隅の座標を取得（順番をIDに基づいて並び替える）
-        field_points = np.zeros((4, 2), dtype=np.float32)
-        for i, marker_id in enumerate([0, 1, 2, 3]):
-            idx = np.where(ids == marker_id)[0]
-            if len(idx) > 0:
-                field_points[i] = corners[idx[0]][0][0]
+        # 変換後画像サイズ[px]
+        width, height = (400, 400)
 
-        # 射影変換行列を計算
-        homography_matrix, _ = cv2.findHomography(field_points, bird_eye_points)
+        marker_cordinates = np.float32(m)
+        true_cordinates = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
+        trans_mat = cv2.getPerspectiveTransform(marker_cordinates, true_cordinates)
+        img_trans = cv2.warpPerspective(frame, trans_mat, (width, height))
 
-        # 鳥瞰画像に変換
-        bird_eye_view = cv2.warpPerspective(frame, homography_matrix, (bird_eye_width, bird_eye_height))
+        # 変換後の画像を表示（必要に応じて）
+        cv2.imshow('Transformed Image', img_trans)
 
-        # 鳥瞰画像上に他のArUcoマーカーをプロット
-        for i in range(len(ids)):
-            if ids[i] not in [0, 1, 2, 3]:  # 四隅以外のマーカー
-                marker_center = np.mean(corners[i][0], axis=0).reshape(1, 1, 2)
-                transformed_center = cv2.perspectiveTransform(marker_center, homography_matrix)
-                x, y = transformed_center[0][0]
-                print(f"ID: {ids[i][0]} -> 鳥瞰座標: ({x:.2f}, {y:.2f})")
-
-                # 鳥瞰図にプロット
-                cv2.circle(bird_eye_view, (int(x), int(y)), 10, (0, 0, 255), -1)
-
-        # 鳥瞰図を表示
-        cv2.imshow('Bird Eye View', bird_eye_view)
-
-    # オリジナル映像を表示
-    cv2.imshow('Original', frame)
-
-    # 'q'キーが押されたら終了
+    # 描画
+    cv2.imshow('SDCs Marker Scan System', frame)
+    
+    # 'q'キーが押されたらループを終了
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
+# カメラとウィンドウのリリース
 cap.release()
 cv2.destroyAllWindows()
