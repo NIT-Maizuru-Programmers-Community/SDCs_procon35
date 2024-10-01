@@ -19,22 +19,25 @@ while True:
     # マーカー検出
     corners, ids, rejectedImgPoints = aruco.detectMarkers(frame, p_dict)
 
-    # マーカーが検出されたか確認
-    if ids is not None and len(ids) >= 4:
+    # マーカーが検出されたか確認し、id 0,1,2,3のマーカーが全て揃っているか確認
+    if ids is not None and set([0, 1, 2, 3]).issubset(ids.ravel()):
         # corners2を初期化して、マーカーごとに座標を格納
-        corners2 = [np.empty((1, 4, 2))] * 4  # 4つのマーカーがあると仮定
+        corners2 = [None] * 4  # id 0, 1, 2, 3 に対応するリスト
+
+        # 各idに対応するcornerを格納
         for i, c in zip(ids.ravel(), corners):
-            corners2[i] = c.copy()
+            if i in [0, 1, 2, 3]:  # id 0,1,2,3にのみ対応
+                corners2[i] = c
 
         # 各マーカーの角を変換後の画像の四隅に対応させる
-        m = np.empty((4, 2))  # 4つのマーカーに対して(x,y)の2つの座標
-        m[0] = corners2[0][0][2]  # マーカー0の角2 → 変換後の左上
-        m[1] = corners2[1][0][3]  # マーカー1の角3 → 変換後の右上
-        m[2] = corners2[2][0][0]  # マーカー2の角0 → 変換後の右下
-        m[3] = corners2[3][0][1]  # マーカー3の角1 → 変換後の左下
+        m = np.empty((4, 2))  # 4つのマーカーに対して(x, y)の2つの座標
+        m[0] = corners2[0][0][2]  # id 0の角2 → 変換後の左上
+        m[1] = corners2[1][0][3]  # id 1の角3 → 変換後の右上
+        m[2] = corners2[2][0][0]  # id 2の角0 → 変換後の右下
+        m[3] = corners2[3][0][1]  # id 3の角1 → 変換後の左下
 
         # 変形後画像サイズ[px]
-        width, height = (500, 500)
+        width, height = (700, 700)
 
         marker_coordinates = np.float32(m)
         true_coordinates = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
