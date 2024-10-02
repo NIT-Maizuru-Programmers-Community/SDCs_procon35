@@ -37,7 +37,7 @@ while True:
         m[3] = corners2[3][0][1]  # id 3の角1 → 変換後の左下
 
         # 変形後画像サイズ[px]
-        width, height = (700, 700)
+        width, height = (1980, 1080)
 
         marker_coordinates = np.float32(m)
         true_coordinates = np.float32([[0, 0], [width, 0], [width, height], [0, height]])
@@ -45,6 +45,26 @@ while True:
         # 透視変換行列を計算し、画像を変換
         trans_mat = cv2.getPerspectiveTransform(marker_coordinates, true_coordinates)
         img_trans = cv2.warpPerspective(frame, trans_mat, (width, height))
+
+        # 変換後の画像で再度マーカー検出
+        trans_corners, trans_ids, _ = aruco.detectMarkers(img_trans, p_dict)
+
+        # 変換後の画像にマーカーが存在すれば、そのIDと左上の座標を表示
+        if trans_ids is not None:
+            aruco.drawDetectedMarkers(img_trans, trans_corners, trans_ids)
+            for i in range(len(trans_ids)):
+                c = trans_corners[i][0]
+                # 左上の座標を取得
+                top_left_corner = (int(c[0][0]), int(c[0][1]))
+                # IDを画像上に表示
+                cv2.putText(img_trans, f'ID: {trans_ids[i][0]}', top_left_corner,
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+                # 左上の座標を画像上に表示
+                cv2.putText(img_trans, f'Pos: {top_left_corner}', (top_left_corner[0], top_left_corner[1] + 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 0, 0), 2, cv2.LINE_AA)
+                
+                # ターミナルにIDと左上の座標を表示
+                print(f"ID: {trans_ids[i][0]}, Top-left corner: {top_left_corner}")
 
         # 変換後の画像を表示
         cv2.imshow('Transformed Image', img_trans)
