@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # カメラの初期化
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 # ArUcoマーカーの辞書とパラメータの設定
 aruco = cv2.aruco
@@ -37,7 +37,7 @@ while True:
         m[3] = corners2[3][0][1]  # id 3の角1 → 変換後の左下
 
         # 変形後画像サイズ[px]
-        width, height = (1980, 1080)
+        width, height = (500, 500)
 
         marker_coordinates = np.float32(m)
         true_coordinates = np.float32([[0, 0], [width, 0], [width, height], [0, height]])

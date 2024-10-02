@@ -14,7 +14,8 @@ async def send_data():
     async with websockets.connect(uri) as websocket:
         # 送信するデータをJSON形式で準備
         data = {
-            "sensor_id": "sensor_01",
+            "id": "5",
+            "zahyo-x": 330,
             "temperature": 23.5,
             "humidity": 60.2,
             "city": t
