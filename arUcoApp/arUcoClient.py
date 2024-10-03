@@ -6,7 +6,7 @@ import json
 import time
 
 # カメラの初期化
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture(0)
 
 # ArUcoマーカーの辞書とパラメータの設定
 aruco = cv2.aruco
