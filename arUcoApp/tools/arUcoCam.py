@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # カメラの初期化
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 # ArUcoマーカーの辞書とパラメータの設定
 aruco = cv2.aruco
@@ -21,7 +21,7 @@ while True:
 
     # マーカーが検出されたか確認し、id 0,1,2,3のマーカーが全て揃っているか確認
     if ids is not None and set([0, 1, 2, 3]).issubset(ids.ravel()):
-        # corners2を初期化して、マーカーごとに座標を格納
+        # corners2を初期化して、マーカーごとに座標を格納q
         corners2 = [None] * 4  # id 0, 1, 2, 3 に対応するリスト
 
         # 各idに対応するcornerを格納
