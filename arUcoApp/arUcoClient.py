@@ -97,8 +97,13 @@ while True:
                     "y": top_left_corner[1]
                 })
 
-            # WebSocketでデータを送信
-            asyncio.run(send_data(marker_data))
+        else:
+            # マーカーが存在しない場合、Noneを送信
+            marker_data = None
+            print("No markers datected.")
+
+        # WebSocketでデータを送信
+        asyncio.run(send_data(marker_data))
 
         # 変換後の画像を表示
         cv2.imshow('Transformed Image', img_trans)
