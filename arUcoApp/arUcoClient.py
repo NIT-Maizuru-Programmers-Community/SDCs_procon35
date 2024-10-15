@@ -28,17 +28,20 @@ async def send_data(marker_data):
 
 # メイン処理
 while True:
-    # 1秒ごとに動作(->実装時に解放)
-    #time.sleep(1)
-
     # フレーム読み込み
     ret, frame = cap.read()
 
     if not ret:
         break
 
+    # 画像をグレースケールに変換
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    # ガウシアンブラーを適用してノイズを軽減
+    gray = cv2.GaussianBlur(gray, (5, 5), 0)
+
     # マーカー検出
-    corners, ids, rejectedImgPoints = aruco.detectMarkers(frame, p_dict)
+    corners, ids, rejectedImgPoints = aruco.detectMarkers(gray, p_dict)
 
     # マーカーが検出されたか確認し、id 0,1,2,3のマーカーが全て揃っているか確認
     if ids is not None and set([0, 1, 2, 3]).issubset(ids.ravel()):
@@ -100,7 +103,7 @@ while True:
         else:
             # マーカーが存在しない場合、Noneを送信
             marker_data = None
-            print("No markers datected.")
+            print("No markers detected.")
 
         # WebSocketでデータを送信
         asyncio.run(send_data(marker_data))
