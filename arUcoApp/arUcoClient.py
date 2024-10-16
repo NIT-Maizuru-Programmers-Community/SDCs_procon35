@@ -7,7 +7,7 @@ import time
 import serial
 
 # Arduinoの定義
-SERIAL_PORT = '/dev/tty.usbmodem1101'  # Arduinoが接続されているポート名
+SERIAL_PORT = '/dev/ttyACM0'  # Arduinoが接続されているポート名
 BAUD_RATE = 9600  # Arduinoと一致するボーレート
 arduino = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) # コマンド送信用
 
