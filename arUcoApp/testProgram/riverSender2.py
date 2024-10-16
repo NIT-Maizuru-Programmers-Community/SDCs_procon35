@@ -3,7 +3,7 @@ import time
 #import keyboard  # キー入力を監視するライブラリ
 
 # Arduinoと通信するためのシリアルポート設定（適宜変更してください）
-SERIAL_PORT = '/dev/tty.usbmodem1101'  # Arduinoが接続されているポート名
+SERIAL_PORT = '/dev/ttyACM0'  # Arduinoが接続されているポート名
 BAUD_RATE = 9600  # Arduinoと一致するボーレート
 
 arduino = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
