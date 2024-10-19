@@ -1,0 +1,6 @@
+UnityApp/Library/PackageCache/com.unity.burst@1.8.13/.Runtime/libburst-llvm-16.dylib filter=lfs diff=lfs merge=lfs -text
+UnityApp/Assets/Fonts/DotGothic16-Regular[[:space:]]SDF.asset filter=lfs diff=lfs merge=lfs -text
+UnityApp/Assets/Fonts/NotoSansJP-VariableFont_wght[[:space:]]SDF.asset filter=lfs diff=lfs merge=lfs -text
+.git/objects/pack/pack-693c9ecb1202ac2c2be5bbb8fdff32f2149fafb9.pack filter=lfs diff=lfs merge=lfs -text
+.git/objects/pack/pack-8af60a99cb3f00e980fedc1cb03eed46ae165d7e.pack filter=lfs diff=lfs merge=lfs -text
+.git/objects/pack/pack-e1d417b815916707b5992e9dbfe9fd8e41669655.pack filter=lfs diff=lfs merge=lfs -text
