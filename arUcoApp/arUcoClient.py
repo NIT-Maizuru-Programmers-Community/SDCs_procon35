@@ -3,16 +3,9 @@ import numpy as np
 import asyncio
 import websockets
 import json
-import time
-import serial
-
-# Arduinoの定義
-#SERIAL_PORT = '/dev/ttyACM0'  # Arduinoが接続されているポート名
-#BAUD_RATE = 9600  # Arduinoと一致するボーレート
-#arduino = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1) # コマンド送信用
 
 # カメラの初期化
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(2)
 
 # ArUcoマーカーの辞書とパラメータの設定
 aruco = cv2.aruco
@@ -21,7 +14,7 @@ p_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 # WebSocketでデータを送信する関数
 async def send_data(marker_data):
     # WebSocketサーバーのURI
-    uri = "ws://153.121.41.11:5000"
+    uri = "ws://153.121.41.11:9980"
 
     async with websockets.connect(uri) as websocket:
         # データをJSON形式にシリアライズして送信
@@ -106,23 +99,10 @@ while True:
                     "y": top_left_corner[1]
                 })
 
-            # ID 11が存在するか確認
-            #if 11 in trans_ids:
-            #    # Arduinoに '1' を送信
-            #    arduino.write('1'.encode())
-            #    print("ID 11 detected, sent '1' to Arduino.")
-            #else:
-            #    # Arduinoに '0' を送信
-            #    arduino.write('0'.encode())
-            #    print("ID 11 not detected, sent '0' to Arduino.")
-
         else:
             # マーカーが存在しない場合、Noneを送信
             marker_data = None
             print("No markers detected.")
-            # Arduinoに '0' を送信
-            #arduino.write('0'.encode())
-            print("No markers, sent '0' to Arduino.")
 
         # WebSocketでデータを送信
         asyncio.run(send_data(marker_data))
