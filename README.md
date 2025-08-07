@@ -22,8 +22,6 @@ SDCs は、地球温暖化問題について**触って・見て・考えて**�
 舞鶴工業高等専門学校 プログラマーズコミュニティ部  
 課題部門チーム
 
-https://106.gigafile.nu/1024-o0fa84f8c14fa259d1e97404083cf3e0b
-↑Unityのプログラム
 
 - YAMAMOTO Mizuki / 3 年電気情報工学科 [Leader]
 - HIARATA Soma / 4 年電気情報工学科
